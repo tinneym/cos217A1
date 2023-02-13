@@ -1,0 +1,47 @@
+START (accept) <- the start state
+    / : -> CHECK_START_COMMENT
+    " : print c -> IN_STRING
+    ' : print c -> IN_CHAR
+    \n : print c, increment line number -> START
+    other : print c -> START
+
+CHECK_START_COMMENT (accept) 
+    * : print " " -> IN_COMMENT
+    / : print c -> CHECK_START_COMMENT
+    " : print /, print c -> IN_STRING
+    ' : print /, print c -> IN_CHAR
+    other : print /, print c -> START
+
+IN_COMMENT (reject)
+    * -> CHECK_END_COMMENT
+    \n : print c -> IN_COMMENT
+    other -> IN_COMMENT
+
+CHECK_END_COMMENT (reject)
+    / -> START
+    * -> CHECK_END_COMMENT
+    \n : print c -> IN_COMMENT
+    other -> IN_COMMENT
+
+IN_STRING (accept)
+    " : print c -> START
+    \ : print c -> ESCAPE_STRING
+    \n : print c, increment line number -> IN_STRING
+    other : print c -> IN_STRING
+
+ESCAPE_STRING (accept) 
+    anything : print c -> IN_STRING
+
+IN_CHAR (accept)
+    ' : print c -> START
+    \ : print c -> ESCAPE_CHAR
+    \n : print c, increment line number -> IN_CHAR
+    other : print c -> IN_CHAR
+
+ESCAPE_CHAR (accept) 
+    anything : print c -> IN_CHAR
+
+
+
+
+
